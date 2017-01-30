@@ -1,10 +1,12 @@
 # Lens.js
 
+![Build status](https://travis-ci.com/LancerComet/lens.js.svg?token=5zYzqd8cwqrVEG6tvNJs&branch=master)
+
 > Bring transition to size changing.
 
 Change element's size with transition automaticlly when content is changed.
 
----
+[Demo](https://lancercomet.github.io/lens.js/) is here.
 
 ## Quick start.
 
