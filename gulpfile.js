@@ -41,6 +41,7 @@ gulp.task("default", ["js:build-umd"]);
       }))
       .pipe(rename('lens.umd.js'))
       .pipe(gulp.dest(`${appConfig.distPath}`))
+      .pipe(gulp.dest(`${rootPath}/docs`))
   })
     
 })();
