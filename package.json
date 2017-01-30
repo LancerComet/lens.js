@@ -6,6 +6,7 @@
   "scripts": {
     "build": "gulp js:build-umd",
     "pretest": "gulp js:build-umd",
+    "test-debug": "karma start ./test/karma.conf.js",
     "test": "karma start ./test/karma.conf.js --single-run"
   },
   "keywords": [

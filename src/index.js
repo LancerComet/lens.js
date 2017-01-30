@@ -117,8 +117,8 @@ class Lens {
    * @private
    */
   $setNewSize (newSize) {
-    if (this.$mode.width) { this.$container.style.width = newSize.width || 0 }
-    if (this.$mode.height) { this.$container.style.height = newSize.height || 0 }
+    if (this.$mode.width) { this.$container.style.width = newSize.width + 'px' || 0 }
+    if (this.$mode.height) { this.$container.style.height = newSize.height + 'px' || 0 }
   }
 
   /**

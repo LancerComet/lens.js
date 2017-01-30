@@ -9,8 +9,8 @@ module.exports = function (config) {
   config.set({
     browsers: ['PhantomJS'],
 
-    // browserDisconnectTimeout: 0,
-    // browserNoActivityTimeout: 0,
+    browserDisconnectTimeout: 0,
+    browserNoActivityTimeout: 0,
 
     frameworks: ['mocha', 'sinon-chai', 'browserify'],
 

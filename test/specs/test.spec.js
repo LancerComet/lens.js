@@ -29,7 +29,8 @@ describe('Lens.js testing.', () => {
 
   const lens = new Lens('#target-element')
   lens.observe({
-    deepWatch: true
+    deepWatch: true,
+    watchStyle: true
   })
 
   it('"targetElement" should be a HTMLElement.', () => {
@@ -44,33 +45,59 @@ describe('Lens.js testing.', () => {
     expect(lens.constructor).equal(Lens)
   })
 
-  it('Height must be 30.', (done) => {
+  describe('"show1" testing.', () => {
     show1()
-    setTimeout(() => {
-      const child1Height = lens.$getContainerSize().height
-      expect(child1Height).equal(30)
-      done()
-    }, 500)
+
+    it('last height must be 30.', () => {
+      expect(lens.$lastSize.height).equal(30)
+    })
+
+    it('Height must be 30.', done => {
+      setTimeout(() => {
+        const child1Height = lens.$getContainerSize().height
+        expect(child1Height).equal(30)
+        show2Test()
+        done()
+      }, 500)
+    })
   })
 
-  it('Height must be 20.', (done) => {
-    show2()
-    setTimeout(() => {
-      const child2Height = lens.$getContainerSize().height
-      expect(child2Height).equal(20)
-      done()
-    }, 500)
-  })
+  function show2Test () {
+    describe('"show2" testing.', () => {
+      it('last height must be 30.', () => {
+        expect(lens.$lastSize.height).equal(30)
+      })
 
-  it('Height must be 30 again.', (done) => {
-    show1()
-    setTimeout(() => {
-      const child1Height = lens.$getContainerSize().height
-      expect(child1Height).equal(30)
-      done()
-    }, 500)
-  })
+      it('show2()', () => {
+        show2()        
+      })
 
+      it('Height must be 20.', (done) => {
+        setTimeout(() => {
+          const child2Height = lens.$getContainerSize().height
+          expect(child2Height).equal(20)
+          show1AgainTest()
+          done()
+        }, 1000)
+      })
+    })
+  }
+
+  function show1AgainTest () {
+    describe('"show1" testing 2nd.', () => {
+      show1()
+
+      it('Height must be 30.', (done) => {
+        setTimeout(() => {
+          const child1Height = lens.$getContainerSize().height
+          expect(child1Height).equal(30)
+          done()
+        }, 1500)
+      })
+    })
+  }
+
+  
   function show1 () {
     child1.style.display = 'block'
     child2.style.display = 'none'

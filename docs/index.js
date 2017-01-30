@@ -174,7 +174,8 @@ const ShowCase = new Vue({
       `
     ],
 
-    show: 0
+    show: 0,
+    interval: null
   },
 
   computed: {
@@ -185,20 +186,43 @@ const ShowCase = new Vue({
 
   methods: {
     transform () {
-      setInterval(() => {
+      if (this.interval) { return }
+      this.interval = setInterval(() => {
         if (this.show >= this.contents.length - 1) {
           this.show = 0
         } else {
           this.show++
         }
       }, 2000)
+    },
+
+    lensInit () {
+      const showCaseLens = new Lens('.show-case-ctnr')
+      showCaseLens.observe({ deepWatch: true })
+    },
+
+    stopTransform () {
+      clearInterval(this.interval)
+      this.interval = null
+    },
+
+    registerEvents () {
+      const events = ['scroll', 'resize']
+      events.forEach(event => {
+        window.addEventListener(event, () => {
+        const scrollTop = document.body.scrollTop
+        scrollTop > 350
+          ? this.stopTransform()
+          : this.transform()
+        })
+      })
     }
   },
 
   mounted () {
-    const showCaseLens = new Lens('.show-case-ctnr')
-    showCaseLens.observe({ deepWatch: true })
+    this.lensInit()
     this.transform()
+    this.registerEvents()
   }
 })
 

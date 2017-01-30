@@ -107,6 +107,9 @@ declare interface IConfig {
    * @memberOf IConfig
    */
   watchStyle: boolean = true
+
+  width: boolean = true
+  height: boolean = true
 }
 
 
