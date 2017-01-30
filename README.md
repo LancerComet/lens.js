@@ -1,6 +1,6 @@
 # Lens.js
 
-![Build status](https://travis-ci.com/LancerComet/lens.js.svg?token=5zYzqd8cwqrVEG6tvNJs&branch=master)
+![Building status](https://travis-ci.org/LancerComet/lens.js.svg?branch=master)
 
 > Bring transition to size changing.
 
