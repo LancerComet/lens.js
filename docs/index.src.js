@@ -1,3 +1,5 @@
+const Lens = require('../dist/lens.umd')
+
 const Component1 = {
   template: `
     <div>

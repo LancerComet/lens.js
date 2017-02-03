@@ -8,8 +8,14 @@ const fs = require("fs")
 const path = require('path')
 
 const gulp = require("gulp")
-const umd = require('gulp-umd')
+const gulpUtil = require("gulp-util")
 const rename = require("gulp-rename")
+const umd = require('gulp-umd')
+
+const aliasify = require("aliasify")
+const browserify = require("browserify")
+const envify = require("envify/custom")
+const watchify = require("watchify")
 
 const rootPath = path.resolve(__dirname, '.')
 
@@ -18,30 +24,133 @@ const rootPath = path.resolve(__dirname, '.')
  * @type { Object }
  */
 const appConfig = {
-  entry: [`${rootPath}/src/index.js`],
   srcPath: `${rootPath}/src`,
   distPath: `${rootPath}/dist`
 }
 
+
+/**
+ * Babel Configuration.
+ * @type { Object }
+ */
 const babelConfig = { 
   presets: ["es2015", "stage-2"]
 }
 
-gulp.task("default", ["js:build-umd"]);
+/**
+ * Default Task defination.
+ */
+gulp.task("default", ['build-umd', 'build-docs'])
 
-(function jsTasks () {
-  /**
-   * UMD bundle.
-   */
-  gulp.task('js:build-umd', () => {
-    gulp.src(appConfig.entry)
-      .pipe(umd({
-        exports: function (file) { return 'Lens' },
-        namespace: function (file) { return 'Lens' }
-      }))
-      .pipe(rename('lens.umd.js'))
-      .pipe(gulp.dest(`${appConfig.distPath}`))
-      .pipe(gulp.dest(`${rootPath}/docs`))
+/**
+ * UMD bundle.
+ */
+gulp.task('build-umd', () => {
+  gulp.src(path.resolve(__dirname, './src/index.js'))
+    .pipe(umd({
+      exports: function (file) { return 'Lens' },
+      namespace: function (file) { return 'Lens' }
+    }))
+    .pipe(rename('lens.umd.js'))
+    .pipe(gulp.dest(`${appConfig.distPath}`))
   })
+
+/**
+ * JS Tasks Configuration.
+ * All tasks deal with javascript will be set in here.
+ */
+;(function docsTasks () {
+  /**
+   * Task for bundle only. It will exilt when bundling finished.
+   */
+  gulp.task('build-docs', function () {
+      const docsBundler = createBundler({
+        entry: `${rootPath}/docs/index.src.js`,
+        isDebug: false,
+        isWatchify: false,           
+        isUglify: true,
+        envs: { NODE_ENV: 'production' }
+      })
+
+      docsBundler
+        .on("log", gulpUtil.log)
+        .on("error", function (err) {
+          console.error(err.toString())
+          this.emit("end")
+        })
+
+      // const lensBuild = createBundler({
+      //   entry: `${rootPath}/dist/lens.umd.js`,
+      //   isDebug: false,
+      //   isWatchify: false,           
+      //   isUglify: true,
+      //   envs: { NODE_ENV: 'production' }
+      // })
+
+      buildExec(docsBundler, path.resolve(__dirname, './docs/index.build.js'))
+      // buildExec(lensBuild, path.resolve(__dirname, './docs/libs/lens.build.js'))
+      
+  })
+
+  /**
+   * Building Function.
+   */
+  function buildExec (bundler, distPath) {
+    return bundler
+      .bundle(function () {})  // Empty function for using minifyify.
+      .pipe(fs.createWriteStream(distPath))
+  }
     
 })();
+
+/* Utils below. */
+
+/**
+ * Create Browserify bundler object.
+ */
+function createBundler ({ isDebug = true, isWatchify = true, isUglify = false, envs = { NODE_ENV: 'development' }, entry = [] }) {
+  const browserifyConfig = {
+    entries: entry,
+    debug: isDebug,
+    cache: {},
+    packageCache: {},
+    plugin: []
+  }
+
+  const minifyConfig = {
+    map: false, 
+    uglify: {
+      compress: {
+        drop_console: true,
+        dead_code: true,
+        conditionals: true,
+        unused: true,
+        if_return: true,
+        global_defs: {
+            DEBUG: false
+        }
+      },
+      mangle: true
+    }
+  }
+
+  isWatchify && browserifyConfig.plugin.push(watchify)
+
+  const bundler = new browserify(browserifyConfig)
+    .transform('babelify', babelConfig)
+
+    isUglify && bundler.plugin("minifyify", minifyConfig)
+
+    return commonTransforms(bundler)
+
+    // Define common transformers here.
+    function commonTransforms (bundler) {
+      return bundler
+        .transform(aliasify, {
+          aliases: {
+            'src': rootPath + '/src'
+          }
+        })
+        .transform(envify(envs))
+    }
+}
