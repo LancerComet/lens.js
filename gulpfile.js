@@ -15,7 +15,6 @@ const umd = require('gulp-umd')
 const aliasify = require("aliasify")
 const browserify = require("browserify")
 const envify = require("envify/custom")
-const watchify = require("watchify")
 
 const rootPath = path.resolve(__dirname, '.')
 
@@ -67,7 +66,6 @@ gulp.task('build-umd', () => {
       const docsBundler = createBundler({
         entry: `${rootPath}/docs/index.src.js`,
         isDebug: false,
-        isWatchify: false,           
         isUglify: true,
         envs: { NODE_ENV: 'production' }
       })
@@ -79,17 +77,7 @@ gulp.task('build-umd', () => {
           this.emit("end")
         })
 
-      // const lensBuild = createBundler({
-      //   entry: `${rootPath}/dist/lens.umd.js`,
-      //   isDebug: false,
-      //   isWatchify: false,           
-      //   isUglify: true,
-      //   envs: { NODE_ENV: 'production' }
-      // })
-
       buildExec(docsBundler, path.resolve(__dirname, './docs/index.build.js'))
-      // buildExec(lensBuild, path.resolve(__dirname, './docs/libs/lens.build.js'))
-      
   })
 
   /**
@@ -108,7 +96,7 @@ gulp.task('build-umd', () => {
 /**
  * Create Browserify bundler object.
  */
-function createBundler ({ isDebug = true, isWatchify = true, isUglify = false, envs = { NODE_ENV: 'development' }, entry = [] }) {
+function createBundler ({ isDebug = true, isUglify = false, envs = { NODE_ENV: 'development' }, entry = [] }) {
   const browserifyConfig = {
     entries: entry,
     debug: isDebug,
@@ -133,8 +121,6 @@ function createBundler ({ isDebug = true, isWatchify = true, isUglify = false, e
       mangle: true
     }
   }
-
-  isWatchify && browserifyConfig.plugin.push(watchify)
 
   const bundler = new browserify(browserifyConfig)
     .transform('babelify', babelConfig)
