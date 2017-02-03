@@ -4,8 +4,8 @@
   "description": "Bring transition to height changing.",
   "main": "dist/lens.umd.js",
   "scripts": {
-    "build": "gulp js:build-umd",
-    "pretest": "gulp js:build-umd",
+    "build": "gulp",
+    "pretest": "gulp build-umd",
     "test-debug": "karma start ./test/karma.conf.js",
     "test": "karma start ./test/karma.conf.js --single-run"
   },
