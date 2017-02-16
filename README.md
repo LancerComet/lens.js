@@ -98,7 +98,7 @@ That's it! Leave it alone and have a coffee. The height will be changed automati
 ### Create a new lens instance.
 
 ```javascript
-const lens = new Lens('#some-element')
+const lens = new Lens(selector | HTMLElement)
 ```
 
 - Methods on lens instance:
