@@ -5,6 +5,7 @@
   "main": "dist/lens.umd.js",
   "scripts": {
     "build": "node ./build.js",
+    "build-demo": "node ./build.demo.js",
     "pretest": "npm run build",
     "test-debug": "karma start ./test/karma.conf.js",
     "test": "karma start ./test/karma.conf.js --single-run"
