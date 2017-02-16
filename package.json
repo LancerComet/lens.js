@@ -1,6 +1,6 @@
 {
   "name": "lens.js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Bring transition to height changing.",
   "main": "dist/lens.umd.js",
   "scripts": {
