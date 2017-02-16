@@ -13,13 +13,15 @@ webpack({
     libraryTarget: 'umd'
   },
 
-  loaders: [
-    {
-      test: /\.js$/,
-      loader: 'babel-loader',
-      exclude: /node_modules/
-    },
-  ]
+  module: {
+    loaders: [
+      {
+        test: /\.js$/,
+        loader: 'babel-loader',
+        exclude: /node_modules/
+      },
+    ],
+  }
 }, function (err, stats) {
   if (err) throw err
   process.stdout.write(stats.toString({
