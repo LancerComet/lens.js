@@ -23,38 +23,40 @@ class Lens {
   /**
    * Creates an instance of Lens.
    * 
-   * @param {HTMLElement} target - Target element to watch.
+   * @param {HTMLElement|string} target - Target element to watch.
    */
-  constructor (selector) {
+  constructor (target) {
     if (!MutationObserver) {
       return Lens.log('Your browser doesn\'t support Lens.js.', 'warn')
     }
 
-    const target = document.querySelector(selector)    
+    const element = (typeof target === 'string')
+      ? document.querySelector(target)
+      : target
 
-    if (!selector || !target) {
-      return Lens.log('Please provide a vaild selector.', 'error')
+    if (!target || !element) {
+      return Lens.log('Please provide a vaild selector or element.', 'error')
     }
     
     // Create a container element to contain target element.
     // We will change container's height, not the target node.
     // But we will get height value from target node.
-    const targetStyle = getComputedStyle(target)
+    const targetStyle = getComputedStyle(element)
     const container = document.createElement('div')
     container.className = 'lens-transition'
-    container.dataset.lens = selector
+    container.dataset.lens = target
     
-    const parentNode = target.parentNode
-    const nextSibling = target.nextSibling
+    const parentNode = element.parentNode
+    const nextSibling = element.nextSibling
 
-    parentNode.removeChild(target)
-    container.appendChild(target)
+    parentNode.removeChild(element)
+    container.appendChild(element)
 
     nextSibling
       ? parentNode.insertBefore(container, nextSibling)
       : parentNode.appendChild(container)
 
-    this.$target = target
+    this.$target = element
     this.$container = container
 
     this.$observer = null
@@ -234,3 +236,5 @@ class Lens {
     window.console && console[type](`[Lens.js] ${message}`)
   }
 }
+
+module.exports = Lens

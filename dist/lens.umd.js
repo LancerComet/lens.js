@@ -1,248 +1,302 @@
-;(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define([], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory();
-  } else {
-    root.Lens = factory();
-  }
-}(this, function() {
-/**
- * Lens.js.
- * Bring transition to height changing.
- * 
- * By LancerComet at 20:45, 2017.01.29.
- * # Carry Your World #
- * 
- * @author: LancerComet
- * @version: 1.0.0
- * @license: MIT
- */
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["Lens"] = factory();
+	else
+		root["Lens"] = factory();
+})(this, function() {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
 
-const MutationObserver = window.MutationObserver ||
-  window.WebKitMutationObserver ||
-  window.MozMutationObserver
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
 
-/**
- * Lens Object.
- * 
- * @class Lens
- */
-class Lens {
-  /**
-   * Creates an instance of Lens.
-   * 
-   * @param {HTMLElement} target - Target element to watch.
-   */
-  constructor (selector) {
-    if (!MutationObserver) {
-      return Lens.log('Your browser doesn\'t support Lens.js.', 'warn')
-    }
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
 
-    const target = document.querySelector(selector)    
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			exports: {},
+/******/ 			id: moduleId,
+/******/ 			loaded: false
+/******/ 		};
 
-    if (!selector || !target) {
-      return Lens.log('Please provide a vaild selector.', 'error')
-    }
-    
-    // Create a container element to contain target element.
-    // We will change container's height, not the target node.
-    // But we will get height value from target node.
-    const targetStyle = getComputedStyle(target)
-    const container = document.createElement('div')
-    container.className = 'lens-transition'
-    container.dataset.lens = selector
-    
-    const parentNode = target.parentNode
-    const nextSibling = target.nextSibling
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
 
-    parentNode.removeChild(target)
-    container.appendChild(target)
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
 
-    nextSibling
-      ? parentNode.insertBefore(container, nextSibling)
-      : parentNode.appendChild(container)
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
 
-    this.$target = target
-    this.$container = container
 
-    this.$observer = null
-    this.$observing = false
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
 
-    this.$lastSize = {
-      width: 0, height: 0
-    }
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
 
-    this.$mode = {
-      width: true, height: true
-    }
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
 
-    const currentSize = this.$getTargetCurrentSize()
-    this.$updateLastSize(currentSize)
-    this.$setNewSize(currentSize)
-  }
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ function(module, exports) {
 
-  /**
-   * Get current size from target element.
-   * 
-   * @private
-   * @returns {ISize}
-   */
-  $getTargetCurrentSize () {
-    const size = this.$target.getBoundingClientRect()
-    return {
-      width: size.width,
-      height: size.height
-    }
-  }
+	/**
+	 * Lens.js.
+	 * Bring transition to height changing.
+	 * 
+	 * By LancerComet at 20:45, 2017.01.29.
+	 * # Carry Your World #
+	 * 
+	 * @author: LancerComet
+	 * @version: 1.0.0
+	 * @license: MIT
+	 */
 
-  /**
-   * Get current size from container element.
-   * 
-   * @private
-   * @returns {ISize}
-   */
-  $getContainerSize () {
-    const size = this.$container.getBoundingClientRect()
-    return {
-      width: size.width, height: size.height
-    }
-  }
+	const MutationObserver = window.MutationObserver ||
+	  window.WebKitMutationObserver ||
+	  window.MozMutationObserver
 
-  /**
-   * Set to last height.
-   * 
-   * @private
-   */
-  $setToLastSize () {
-    this.$container.style.width = this.$lastSize.width + 'px'
-    this.$container.style.height = this.$lastSize.height + 'px'
-  }
+	/**
+	 * Lens Object.
+	 * 
+	 * @class Lens
+	 */
+	class Lens {
+	  /**
+	   * Creates an instance of Lens.
+	   * 
+	   * @param {HTMLElement|string} target - Target element to watch.
+	   */
+	  constructor (target) {
+	    if (!MutationObserver) {
+	      return Lens.log('Your browser doesn\'t support Lens.js.', 'warn')
+	    }
 
-  /**
-   * Set to new size.
-   * 
-   * @param {ISize} newSize
-   * @private
-   */
-  $setNewSize (newSize) {
-    if (this.$mode.width) { this.$container.style.width = newSize.width + 'px' || 0 }
-    if (this.$mode.height) { this.$container.style.height = newSize.height + 'px' || 0 }
-  }
+	    const element = (typeof target === 'string')
+	      ? document.querySelector(target)
+	      : target
 
-  /**
-   * Update last size.
-   * 
-   * @param {ISize} newSize
-   * @private
-   */
-  $updateLastSize (newSize) {
-    if (this.$mode.width) { this.$lastSize.width = newSize.width || 0 }
-    if (this.$mode.height) { this.$lastSize.height = newSize.height || 0 }
-  }
+	    if (!target || !element) {
+	      return Lens.log('Please provide a vaild selector or element.', 'error')
+	    }
+	    
+	    // Create a container element to contain target element.
+	    // We will change container's height, not the target node.
+	    // But we will get height value from target node.
+	    const targetStyle = getComputedStyle(element)
+	    const container = document.createElement('div')
+	    container.className = 'lens-transition'
+	    container.dataset.lens = target
+	    
+	    const parentNode = element.parentNode
+	    const nextSibling = element.nextSibling
 
-  /**
-   * Observer callback.
-   * 
-   * @param {any} mutations
-   * @private 
-   */
-  $observeCallback (mutations) {
-    // Execute until last.
-    for (let i = 0, length = mutations.length; i < length; i++) {
-      if (i + 1 !== length) { continue }
-      this.$update()
-    }
-  }
+	    parentNode.removeChild(element)
+	    container.appendChild(element)
 
-  /**
-   * Update height.
-   * 
-   * @private
-   */
-  $update () {
-    if (!MutationObserver) { return }
+	    nextSibling
+	      ? parentNode.insertBefore(container, nextSibling)
+	      : parentNode.appendChild(container)
 
-    const newSize = this.$getTargetCurrentSize()
+	    this.$target = element
+	    this.$container = container
 
-    // Set to last size first.
-    this.$setToLastSize()
+	    this.$observer = null
+	    this.$observing = false
 
-    // Set target's height to target height.
-    this.$setNewSize(newSize)
-    this.$updateLastSize(newSize)
-  }
+	    this.$lastSize = {
+	      width: 0, height: 0
+	    }
 
-  /**
-   * Start to observe height changing.
-   *
-   * @param {object} [config] - Lens configuration.
-   */
-  observe (config) {
-    if (this.$observing || !MutationObserver) { return }
+	    this.$mode = {
+	      width: true, height: true
+	    }
 
-    // Default observe configuration.
-    const observeConfig = {
-      childList: true,
-      attributes: true
-    }
-    
-    // Configuration from param.
-    config = config || {}
+	    const currentSize = this.$getTargetCurrentSize()
+	    this.$updateLastSize(currentSize)
+	    this.$setNewSize(currentSize)
+	  }
 
-    if (config.watchStyle === false) {
-      observeConfig.attributes = false
-    }
+	  /**
+	   * Get current size from target element.
+	   * 
+	   * @private
+	   * @returns {ISize}
+	   */
+	  $getTargetCurrentSize () {
+	    const size = this.$target.getBoundingClientRect()
+	    return {
+	      width: size.width,
+	      height: size.height
+	    }
+	  }
 
-    if (config.deepWatch === true) {
-      observeConfig.characterData = true
-      observeConfig.subtree = true
-    }
+	  /**
+	   * Get current size from container element.
+	   * 
+	   * @private
+	   * @returns {ISize}
+	   */
+	  $getContainerSize () {
+	    const size = this.$container.getBoundingClientRect()
+	    return {
+	      width: size.width, height: size.height
+	    }
+	  }
 
-    if (config.width === false) {
-      this.$mode.width = false
-    }
+	  /**
+	   * Set to last height.
+	   * 
+	   * @private
+	   */
+	  $setToLastSize () {
+	    this.$container.style.width = this.$lastSize.width + 'px'
+	    this.$container.style.height = this.$lastSize.height + 'px'
+	  }
 
-    if (config.height === false) {
-      this.$mode.height = false
-    }
+	  /**
+	   * Set to new size.
+	   * 
+	   * @param {ISize} newSize
+	   * @private
+	   */
+	  $setNewSize (newSize) {
+	    if (this.$mode.width) { this.$container.style.width = newSize.width + 'px' || 0 }
+	    if (this.$mode.height) { this.$container.style.height = newSize.height + 'px' || 0 }
+	  }
 
-    const observer = new MutationObserver(this.$observeCallback.bind(this))
-    observer.observe(this.$target, observeConfig)
+	  /**
+	   * Update last size.
+	   * 
+	   * @param {ISize} newSize
+	   * @private
+	   */
+	  $updateLastSize (newSize) {
+	    if (this.$mode.width) { this.$lastSize.width = newSize.width || 0 }
+	    if (this.$mode.height) { this.$lastSize.height = newSize.height || 0 }
+	  }
 
-    this.$observer = observer
-    this.$observing = true
-  }
+	  /**
+	   * Observer callback.
+	   * 
+	   * @param {any} mutations
+	   * @private 
+	   */
+	  $observeCallback (mutations) {
+	    // Execute until last.
+	    for (let i = 0, length = mutations.length; i < length; i++) {
+	      if (i + 1 !== length) { continue }
+	      this.$update()
+	    }
+	  }
 
-  /**
-   * Stop height changing observation.
-   * 
-   * @returns void
-   */
-  disconnect () {
-    this.$observer.disconnect()
-    this.$observer = null
-    this.$observing = false
-  }
+	  /**
+	   * Update height.
+	   * 
+	   * @private
+	   */
+	  $update () {
+	    if (!MutationObserver) { return }
 
-  /**
-   * Update height.
-   * 
-   * @returns void
-   */
-  update () {
-    this.$update()
-  }
+	    const newSize = this.$getTargetCurrentSize()
 
-  /**
-   * Log function.
-   * 
-   * @param {string} message
-   */
-  static log (message = '', type = 'log') {
-    window.console && console[type](`[Lens.js] ${message}`)
-  }
-}
+	    // Set to last size first.
+	    this.$setToLastSize()
 
-return Lens;
-}));
+	    // Set target's height to target height.
+	    this.$setNewSize(newSize)
+	    this.$updateLastSize(newSize)
+	  }
+
+	  /**
+	   * Start to observe height changing.
+	   *
+	   * @param {object} [config] - Lens configuration.
+	   */
+	  observe (config) {
+	    if (this.$observing || !MutationObserver) { return }
+
+	    // Default observe configuration.
+	    const observeConfig = {
+	      childList: true,
+	      attributes: true
+	    }
+	    
+	    // Configuration from param.
+	    config = config || {}
+
+	    if (config.watchStyle === false) {
+	      observeConfig.attributes = false
+	    }
+
+	    if (config.deepWatch === true) {
+	      observeConfig.characterData = true
+	      observeConfig.subtree = true
+	    }
+
+	    if (config.width === false) {
+	      this.$mode.width = false
+	    }
+
+	    if (config.height === false) {
+	      this.$mode.height = false
+	    }
+
+	    const observer = new MutationObserver(this.$observeCallback.bind(this))
+	    observer.observe(this.$target, observeConfig)
+
+	    this.$observer = observer
+	    this.$observing = true
+	  }
+
+	  /**
+	   * Stop height changing observation.
+	   * 
+	   * @returns void
+	   */
+	  disconnect () {
+	    this.$observer.disconnect()
+	    this.$observer = null
+	    this.$observing = false
+	  }
+
+	  /**
+	   * Update height.
+	   * 
+	   * @returns void
+	   */
+	  update () {
+	    this.$update()
+	  }
+
+	  /**
+	   * Log function.
+	   * 
+	   * @param {string} message
+	   */
+	  static log (message = '', type = 'log') {
+	    window.console && console[type](`[Lens.js] ${message}`)
+	  }
+	}
+
+	module.exports = Lens
+
+
+/***/ }
+/******/ ])
+});
+;
