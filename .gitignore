@@ -34,3 +34,9 @@ node_modules
 
 # IDEs.
 .vscode/
+
+# Dist.
+dist/
+
+# Cache.
+.rpt2_cache/

@@ -1,9 +1,4 @@
-// Copyright (c) 2017 LancerComet
-// 
-// This software is released under the MIT License.
-// https://opensource.org/licenses/MIT
-
-const Lens = require('../../dist/lens.umd')
+const Lens = require('../../dist/index')
 
 describe('Lens.js testing.', () => {
   const targetElement = document.createElement('div')
@@ -49,12 +44,12 @@ describe('Lens.js testing.', () => {
     show1()
 
     it('last height must be 30.', () => {
-      expect(lens.$lastSize.height).equal(30)
+      expect(lens._lastSize.height).equal(30)
     })
 
     it('Height must be 30.', done => {
       setTimeout(() => {
-        const child1Height = lens.$getContainerSize().height
+        const child1Height = lens._getContainerSize().height
         expect(child1Height).equal(30)
         show2Test()
         done()
@@ -65,7 +60,7 @@ describe('Lens.js testing.', () => {
   function show2Test () {
     describe('"show2" testing.', () => {
       it('last height must be 30.', () => {
-        expect(lens.$lastSize.height).equal(30)
+        expect(lens._lastSize.height).equal(30)
       })
 
       it('show2()', () => {
@@ -74,7 +69,7 @@ describe('Lens.js testing.', () => {
 
       it('Height must be 20.', (done) => {
         setTimeout(() => {
-          const child2Height = lens.$getContainerSize().height
+          const child2Height = lens._getContainerSize().height
           expect(child2Height).equal(20)
           show1AgainTest()
           done()
@@ -89,7 +84,7 @@ describe('Lens.js testing.', () => {
 
       it('Height must be 30.', (done) => {
         setTimeout(() => {
-          const child1Height = lens.$getContainerSize().height
+          const child1Height = lens._getContainerSize().height
           expect(child1Height).equal(30)
           done()
         }, 1500)
@@ -97,7 +92,6 @@ describe('Lens.js testing.', () => {
     })
   }
 
-  
   function show1 () {
     child1.style.display = 'block'
     child2.style.display = 'none'
